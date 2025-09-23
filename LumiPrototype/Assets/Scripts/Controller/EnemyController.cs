@@ -11,7 +11,7 @@ public class EnemyController : MonoBehaviour
     public Color hitFlashColor = Color.white;
 
     public float shieldMinInterval = 2f;
-    public float shieldMaxInterval = 5f;
+    public float shieldMaxInterval = 3f;
 
     private Rigidbody rb;
     private Renderer rend;
