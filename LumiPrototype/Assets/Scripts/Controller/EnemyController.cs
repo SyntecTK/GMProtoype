@@ -10,8 +10,9 @@ public class EnemyController : MonoBehaviour
     public Color shieldColor = Color.red;
     public Color hitFlashColor = Color.white;
 
-    public float shieldMinInterval = 2f;
-    public float shieldMaxInterval = 3f;
+    public float shieldMinInterval = 2f; // Minimale Invulnerable-Zeit
+    public float shieldMaxInterval = 3f; // Maximale Invulnerable-Zeit
+    public float vulnerableDuration = 1f; // Fix 1 Sekunde verwundbar
 
     private Rigidbody rb;
     private Renderer rend;
@@ -27,7 +28,7 @@ public class EnemyController : MonoBehaviour
         currentColor = vulnerableColor;
         rend.material.color = currentColor;
 
-        StartCoroutine(ShieldToggleRoutine());
+        StartCoroutine(ShieldCycleRoutine());
     }
 
     public void TakeDamage()
@@ -35,6 +36,7 @@ public class EnemyController : MonoBehaviour
         if (isInvulnerable) return;
 
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        GameManager.Instance.GainEnergy(10f);
 
         if (!isFlashing)
         {
@@ -54,31 +56,26 @@ public class EnemyController : MonoBehaviour
         isFlashing = false;
     }
 
-    private IEnumerator ShieldToggleRoutine()
+    private IEnumerator ShieldCycleRoutine()
     {
         while (true)
         {
-            float waitTime = Random.Range(shieldMinInterval, shieldMaxInterval);
-            yield return new WaitForSeconds(waitTime);
+            // Zuerst verwundbar für eine Sekunde
+            SetVulnerable(true);
+            yield return new WaitForSeconds(vulnerableDuration);
 
-            ToggleShield();
+            // Dann Invulnerable für random Zeit
+            float invulnerableTime = Random.Range(shieldMinInterval, shieldMaxInterval);
+            SetVulnerable(false);
+            yield return new WaitForSeconds(invulnerableTime);
         }
     }
 
-    private void ToggleShield()
+    private void SetVulnerable(bool vulnerable)
     {
-        isInvulnerable = !isInvulnerable;
+        isInvulnerable = !vulnerable;
+        currentColor = vulnerable ? vulnerableColor : shieldColor;
 
-        if (isInvulnerable)
-        {
-            currentColor = shieldColor;
-        }
-        else
-        {
-            currentColor = vulnerableColor;
-        }
-
-        // Nur Farbe wechseln, wenn nicht gerade geflasht wird
         if (!isFlashing)
         {
             rend.material.color = currentColor;

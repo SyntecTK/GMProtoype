@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SpiritorbController : MonoBehaviour
 {
+    [Header("Orbit Settings")]
     public Transform orbitTarget;     // Der Charakter
     public float orbitRadius = 2f;
     public float orbitSpeed = 90f;
 
+    [Header("Bobbing Settings")]
     public float bobAmplitude = 0.3f;
     public float bobFrequency = 1f;
 
+    [Header("Attack Settings")]
     public float attackSpeed = 10f;
     public float maxAttackDistance = 10f;
     public float returnSpeed = 12f;
-    public float damage = 20f;
 
     private Vector3 attackDirection;
     private Vector3 attackStartPosition;
@@ -25,10 +28,6 @@ public class SpiritorbController : MonoBehaviour
         {
             case OrbitState.Orbiting:
                 OrbitMovement();
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    StartAttack();
-                }
                 break;
 
             case OrbitState.Attacking:
@@ -53,8 +52,10 @@ public class SpiritorbController : MonoBehaviour
         transform.position = orbitTarget.position + new Vector3(x, y, z);
     }
 
-    private void StartAttack()
+    public void StartAttack()
     {
+        if (currentState != OrbitState.Orbiting) return;
+
         currentState = OrbitState.Attacking;
         attackStartPosition = transform.position;
         attackDirection = orbitTarget.forward.normalized;
@@ -100,13 +101,15 @@ public class SpiritorbController : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             Debug.Log("Hit enemy!");
-            other.GetComponent<EnemyController>().TakeDamage();
-            // Kugel soll zurückkehren (nicht verschwinden)
+            var enemy = other.GetComponent<EnemyController>();
+            if (enemy != null)
+                enemy.TakeDamage();
+
             StartReturn();
         }
     }
 
-    enum OrbitState
+    private enum OrbitState
     {
         Orbiting,
         Attacking,
