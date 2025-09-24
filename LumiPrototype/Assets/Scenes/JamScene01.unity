@@ -662,7 +662,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -1798,9 +1798,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  flowCost: 20
+  flowCost: 10
   flowGain: 15
-  energyCost: 20
+  energyCost: 10
   energyGain: 15
 --- !u!136 &1836510689
 CapsuleCollider:
@@ -1889,7 +1889,7 @@ MonoBehaviour:
   orbitSpeed: 180
   bobAmplitude: 0.2
   bobFrequency: 0.2
-  attackSpeed: 6
+  attackSpeed: 10
   maxAttackDistance: 10
   returnSpeed: 12
 --- !u!135 &1841902857
