@@ -6,7 +6,7 @@ public class PlayerAnimationController : MonoBehaviour
 {
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject raycastCenter;
-    [SerializeField] private SpiritorbController spiritOrb;
+    [SerializeField] private OrbStateController spiritOrb;
     [Header("Movement Settings")]
     [SerializeField] private float transitionSpeed = 0.2f;
     [SerializeField] private float moveSpeed = 3f;
@@ -65,14 +65,48 @@ public class PlayerAnimationController : MonoBehaviour
 
     public void OnAttack01(InputValue value)
     {
-        if (GameManager.Instance.UseFlow(flowCost))
+        bool modified = Keyboard.current.leftShiftKey.isPressed;
+
+        if (Gamepad.current != null)
         {
-            spiritOrb.StartAttack();
+            modified |= Gamepad.current.rightTrigger.ReadValue() > 0.5f;
+        }
+
+        if (modified)
+        {
+            if (GameManager.Instance.UseEnergy(energyCost))
+            {
+                spiritOrb.StartParry();
+            }
+            else
+            {
+                Debug.Log("Not enough Energy!");
+            }
         }
         else
         {
-            Debug.Log("Not enough Flow!");
+            if (GameManager.Instance.UseFlow(flowCost))
+            {
+                spiritOrb.StartAttack();
+            }
+            else
+            {
+                Debug.Log("Not enough Flow!");
+            }
         }
+        
+    }
+
+    public void OnParry01(InputValue value)
+    {
+        //if(GameManager.Instance.UseEnergy(energyCost))
+        //{
+        //    spiritOrb.StartParry();
+        //}
+        //else
+        //{
+        //    Debug.Log("Not enough Energy!");
+        //}
     }
 
     private void HandleMovement()

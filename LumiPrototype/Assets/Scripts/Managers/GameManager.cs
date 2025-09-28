@@ -7,8 +7,11 @@ public class GameManager : MonoBehaviour
 
     public event Action<float, float> OnResourcesChanged;
 
-    private float flowValue = 50f;
-    private float energyValue = 0f;
+    [Header("Actors")]
+    [SerializeField] private GameObject player;
+
+    [SerializeField] private float flowValue = 50f;
+    [SerializeField] private float energyValue = 0f;
 
     [SerializeField] private float maxFlow = 100f;
     [SerializeField] private float maxEnergy = 100f;
@@ -63,4 +66,36 @@ public class GameManager : MonoBehaviour
 
     public float GetFlow() => flowValue;
     public float GetEnergy() => energyValue;
+
+    public void DisablePlayerPhysics()
+    {
+        //Rigidbody rb = player.GetComponent<Rigidbody>();
+        //if (rb != null)
+        //{
+        //    rb.isKinematic = true;           
+        //    rb.useGravity = false;            
+        //}
+
+        //foreach (Collider c in player.GetComponentsInChildren<Collider>())
+        //{
+        //    c.enabled = false;
+        //}
+        player.layer = LayerMask.NameToLayer("CollisionIgnore");
+    }
+
+    public void EnablePlayerPhysics()
+    {
+        //Rigidbody rb = player.GetComponent<Rigidbody>();
+        //if (rb != null)
+        //{
+        //    rb.isKinematic = false;
+        //    rb.useGravity = true;             
+        //}
+
+        //foreach (Collider c in player.GetComponentsInChildren<Collider>())
+        //{
+        //    c.enabled = true;
+        //}
+        player.layer = LayerMask.NameToLayer("Default");
+    }
 }
