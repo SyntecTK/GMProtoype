@@ -32,10 +32,9 @@ public class GameManager : MonoBehaviour
     {
         if(flowValue >= amount)
         {
-            Debug.Log("Using Flow. Flow now: " + flowValue);
             flowValue -= amount;
             OnResourcesChanged?.Invoke(flowValue, energyValue);
-            Debug.Log("Used Flow. Flow now: " + flowValue);
+            Debug.Log("Used Flow");
             return true;
         }
         return false;
@@ -47,6 +46,7 @@ public class GameManager : MonoBehaviour
         {
             energyValue -= amount;
             OnResourcesChanged?.Invoke(flowValue, energyValue);
+            Debug.Log("Used Energy!");
             return true;
         }
         return false;
@@ -56,12 +56,14 @@ public class GameManager : MonoBehaviour
     {
         flowValue = Mathf.Min(flowValue + amount, maxFlow);
         OnResourcesChanged?.Invoke(flowValue, energyValue);
+        Debug.Log("Gained Health!");
     }
 
     public void GainEnergy(float amount)
     {
         energyValue = Mathf.Min(energyValue + amount, maxEnergy);
         OnResourcesChanged?.Invoke(flowValue, energyValue);
+        Debug.Log("Gained Energy!");
     }
 
     public float GetFlow() => flowValue;

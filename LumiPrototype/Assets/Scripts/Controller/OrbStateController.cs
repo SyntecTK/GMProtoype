@@ -44,6 +44,7 @@ public class OrbStateController : MonoBehaviour
     private Vector3 lastHitDirection;
     private float approachTimer = 0f;
     private bool isApproaching = false;
+    private bool hitEnemyWithParry = false;
 
     private void Update()
     {
@@ -136,7 +137,7 @@ public class OrbStateController : MonoBehaviour
             }
             else if (currentState == OrbitState.Parrying)
             {
-                Debug.Log("Parried Enemy");
+                hitEnemyWithParry = true;
                 StartCoroutine(HandleParryHit(enemy));
             }
         }
@@ -156,6 +157,22 @@ public class OrbStateController : MonoBehaviour
         parryAngle = Mathf.Atan2(local.y, local.x) * Mathf.Rad2Deg;
 
         Time.timeScale = slowMoFactor;
+
+        float timer = parryDuration;
+    }
+
+    private void CheckForParryHit()
+    {
+        if(hitEnemyWithParry)
+        {
+            Debug.Log("Hit the Parry!");
+            GameManager.Instance.GainEnergy(20f);
+        }
+        else
+        {
+            Debug.Log("Missed the Parry!");
+            GameManager.Instance.UseFlow(10f);
+        }
     }
 
     private void ParryMovement()
@@ -200,7 +217,9 @@ public class OrbStateController : MonoBehaviour
 
     private void EndParry()
     {
+        CheckForParryHit();
         Time.timeScale = 1f;
+        hitEnemyWithParry = false;
         currentState = OrbitState.Returning;
     }
 

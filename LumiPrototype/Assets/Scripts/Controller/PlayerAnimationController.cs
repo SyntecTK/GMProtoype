@@ -74,18 +74,11 @@ public class PlayerAnimationController : MonoBehaviour
 
         if (modified)
         {
-            if (GameManager.Instance.UseEnergy(energyCost))
-            {
-                spiritOrb.StartParry();
-            }
-            else
-            {
-                Debug.Log("Not enough Energy!");
-            }
+            spiritOrb.StartParry();
         }
         else
         {
-            if (GameManager.Instance.UseFlow(flowCost))
+            if (GameManager.Instance.UseEnergy(energyCost))
             {
                 spiritOrb.StartAttack();
             }
@@ -96,19 +89,6 @@ public class PlayerAnimationController : MonoBehaviour
         }
         
     }
-
-    public void OnParry01(InputValue value)
-    {
-        //if(GameManager.Instance.UseEnergy(energyCost))
-        //{
-        //    spiritOrb.StartParry();
-        //}
-        //else
-        //{
-        //    Debug.Log("Not enough Energy!");
-        //}
-    }
-
     private void HandleMovement()
     {
         float horizontalMove = moveVector.x;
