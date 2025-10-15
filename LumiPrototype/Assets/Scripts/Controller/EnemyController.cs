@@ -12,15 +12,16 @@ public class EnemyController : MonoBehaviour
 
     public GameObject parryObject;
 
-    public float jumpForce = 2f;          // Sprunghöhe
+    public float jumpForce = 1.2f;          // Sprunghöhe
     public float jumpDistance = 2f;       // Vorwärtsdistanz pro Sprung
-    public float jumpInterval = 0.8f;     // Zeit zwischen Sprüngen
+    public float jumpInterval = 1.6f;     // Zeit zwischen Sprüngen
     public float sideOffset = 1f;         // seitlicher Versatz links/rechts
     public float flashDuration = 0.1f;
 
     public Color vulnerableColor = Color.blue;
     public Color shieldColor = Color.red;
     public Color hitFlashColor = Color.white;
+    public Color parryColor = Color.orange;
 
     public float shieldMinInterval = 2f; // Minimale Invulnerable-Zeit
     public float shieldMaxInterval = 3f; // Maximale Invulnerable-Zeit
@@ -131,19 +132,46 @@ public class EnemyController : MonoBehaviour
     {
         while (true)
         {
+            float rand = Random.value;
+            bool doAttack = rand < 0.3f;
             if (canHop)
             {
-                Vector3 forward = transform.right * jumpDistance;
-                Vector3 side = (jumpLeft ? -transform.right : transform.right) * sideOffset;
-                Vector3 jumpTarget = transform.position + forward + side;
 
-                Vector3 jumpVector = jumpTarget - transform.position;
-                jumpVector.y = jumpForce; // Y-Komponente für Höhe
+                if(doAttack)
+                {
+                    Debug.Log("ATTACK");
+                    GameManager.Instance.StartParryWindow();
+                    rend.material.color = parryColor;
+                    currentColor = parryColor;
 
-                rb.linearVelocity = Vector3.zero; // alte Geschwindigkeit löschen
-                rb.AddForce(jumpVector, ForceMode.VelocityChange);
+                    Vector3 playerDir = (GameManager.Instance.GetPlayerPosition() - transform.position).normalized;
+                    playerDir.y = 0f;
 
-                jumpLeft = !jumpLeft; // nächste Richtung wechseln
+                    Vector3 jumpVec = Vector3.up * (jumpForce * 1.6f) + playerDir * (jumpDistance * 4f);
+
+                    rb.linearVelocity = Vector3.zero;
+                    rb.AddForce(jumpVec, ForceMode.VelocityChange);
+
+                    yield return new WaitForSeconds(0.6f);
+                    rb.linearVelocity = Vector3.zero;
+                    rend.material.color = currentColor = isInvulnerable ? shieldColor : vulnerableColor;
+                    GameManager.Instance.EndParryWindow();
+                }
+                else
+                {
+                    Vector3 forward = transform.right * jumpDistance;
+                    Vector3 side = (jumpLeft ? -transform.right : transform.right) * sideOffset;
+                    Vector3 jumpTarget = transform.position + forward + side;
+
+                    Vector3 jumpVector = jumpTarget - transform.position;
+                    jumpVector.y = jumpForce; 
+
+                    rb.linearVelocity = Vector3.zero; 
+                    rb.AddForce(jumpVector, ForceMode.VelocityChange);
+
+                    jumpLeft = !jumpLeft;
+                    Debug.Log("JUMP");
+                }
             }
             yield return new WaitForSeconds(jumpInterval);
         }

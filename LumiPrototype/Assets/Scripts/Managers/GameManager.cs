@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -15,6 +16,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private float maxFlow = 100f;
     [SerializeField] private float maxEnergy = 100f;
+
+    private bool canparry = false;
+    public bool CanParry => canparry;
 
     private void Awake()
     {
@@ -39,7 +43,6 @@ public class GameManager : MonoBehaviour
         }
         return false;
     }
-
     public bool UseEnergy(float amount)
     {
         if(energyValue >= amount)
@@ -51,53 +54,30 @@ public class GameManager : MonoBehaviour
         }
         return false;
     }
-
     public void GainFlow(float amount)
     {
         flowValue = Mathf.Min(flowValue + amount, maxFlow);
         OnResourcesChanged?.Invoke(flowValue, energyValue);
         Debug.Log("Gained Health!");
     }
-
     public void GainEnergy(float amount)
     {
         energyValue = Mathf.Min(energyValue + amount, maxEnergy);
         OnResourcesChanged?.Invoke(flowValue, energyValue);
         Debug.Log("Gained Energy!");
     }
-
     public float GetFlow() => flowValue;
     public float GetEnergy() => energyValue;
-
-    public void DisablePlayerPhysics()
+    public Vector3 GetPlayerPosition()
     {
-        //Rigidbody rb = player.GetComponent<Rigidbody>();
-        //if (rb != null)
-        //{
-        //    rb.isKinematic = true;           
-        //    rb.useGravity = false;            
-        //}
-
-        //foreach (Collider c in player.GetComponentsInChildren<Collider>())
-        //{
-        //    c.enabled = false;
-        //}
-        player.layer = LayerMask.NameToLayer("CollisionIgnore");
+        return player.transform.position;
     }
-
-    public void EnablePlayerPhysics()
+    public void StartParryWindow()
     {
-        //Rigidbody rb = player.GetComponent<Rigidbody>();
-        //if (rb != null)
-        //{
-        //    rb.isKinematic = false;
-        //    rb.useGravity = true;             
-        //}
-
-        //foreach (Collider c in player.GetComponentsInChildren<Collider>())
-        //{
-        //    c.enabled = true;
-        //}
-        player.layer = LayerMask.NameToLayer("Default");
+        canparry = true;
+    }
+    public void EndParryWindow()
+    {
+        canparry = false;
     }
 }

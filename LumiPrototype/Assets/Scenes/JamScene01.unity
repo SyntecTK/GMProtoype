@@ -460,14 +460,15 @@ MonoBehaviour:
   eyesOpen: {fileID: 1566479340}
   eyesClosed: {fileID: 1586589501}
   parryObject: {fileID: 0}
-  jumpForce: 2
+  jumpForce: 1.2
   jumpDistance: 2
-  jumpInterval: 0.8
+  jumpInterval: 1.6
   sideOffset: 1
   flashDuration: 0.1
   vulnerableColor: {r: 0, g: 0, b: 1, a: 1}
   shieldColor: {r: 1, g: 0, b: 0, a: 1}
   hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  parryColor: {r: 1, g: 0.6470588, b: 0, a: 1}
   shieldMinInterval: 2
   shieldMaxInterval: 5
   vulnerableDuration: 2
@@ -936,6 +937,7 @@ GameObject:
   - component: {fileID: 1160671798}
   - component: {fileID: 1160671797}
   - component: {fileID: 1160671800}
+  - component: {fileID: 1160671801}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1061,6 +1063,20 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &1160671801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160671796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32ebd269f88e5a46a0b6f26d7ef9a93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  smoothTime: 0.5
+  cameraOffsetX: 3
 --- !u!1 &1194733740
 GameObject:
   m_ObjectHideFlags: 0
@@ -1371,7 +1387,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.46
+      value: 1.8
       objectReference: {fileID: 0}
     - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2022,7 +2038,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ab36654c78b74f409087dcb784269eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyType: 0
+  enemyType: 1
   eyesOpen: {fileID: 937786993}
   eyesClosed: {fileID: 1040080294}
   parryObject: {fileID: 0}
@@ -2034,6 +2050,7 @@ MonoBehaviour:
   vulnerableColor: {r: 0, g: 0, b: 1, a: 1}
   shieldColor: {r: 1, g: 0, b: 0, a: 1}
   hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  parryColor: {r: 1, g: 0.6470588, b: 0, a: 1}
   shieldMinInterval: 2
   shieldMaxInterval: 5
   vulnerableDuration: 2

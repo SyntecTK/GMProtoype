@@ -139,8 +139,11 @@ public class OrbStateController : MonoBehaviour
             }
             else if (currentState == OrbitState.Parrying)
             {
-                hitEnemyWithParry = true;
-                StartCoroutine(HandleParryHit(enemy));
+                if(GameManager.Instance.CanParry)
+                {
+                    hitEnemyWithParry = true;
+                    StartCoroutine(HandleParryHit(enemy));
+                }
             }
         }
     }
