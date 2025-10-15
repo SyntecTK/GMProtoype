@@ -58,7 +58,6 @@ public class EnemyController : MonoBehaviour
         if (isInvulnerable) return;
 
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-        GameManager.Instance.GainEnergy(10f);
 
         if (!isFlashing)
         {
