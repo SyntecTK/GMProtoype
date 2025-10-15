@@ -49,6 +49,7 @@ public class EnemyController : MonoBehaviour
         else if (enemyType == EnemyType.Jumper)
         {
             StartCoroutine(HopRoutine());
+            StartCoroutine(ShieldCycleRoutine());
         }
     }
 

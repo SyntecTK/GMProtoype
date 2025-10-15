@@ -13,7 +13,7 @@ public class OrbStateController : MonoBehaviour
     }
 
     [Header("Orbit Settings")]
-    public Transform orbitTarget;     // Der Charakter
+    public Transform orbitTarget;
     public float orbitRadius = 2f;
     public float orbitSpeed = 90f;
 
@@ -33,7 +33,7 @@ public class OrbStateController : MonoBehaviour
 
     [Header("ParrySettings")]
     [SerializeField] private float parryRadius = 3f;
-    [SerializeField] private float parrySpeed = 360f;   // Grad pro Sekunde
+    [SerializeField] private float parrySpeed = 360f;  
     [SerializeField] private float parryDuration = 0.6f;
     [SerializeField] private float slowMoFactor = 0.3f;
     [SerializeField] private float knockbackForce = 8f;
@@ -44,6 +44,8 @@ public class OrbStateController : MonoBehaviour
     private Vector3 lastHitDirection;
     private float approachTimer = 0f;
     private bool isApproaching = false;
+
+    private bool hitEnemy = false;
 
     private void Update()
     {
@@ -160,13 +162,11 @@ public class OrbStateController : MonoBehaviour
 
     private void ParryMovement()
     {
-        // Phase 1: Approach
         if (isApproaching)
         {
             approachTimer += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(approachTimer / approachDuration);
 
-            // Berechne Punkt auf der Umlaufbahn mit aktuellem parryAngle
             float rad = parryAngle * Mathf.Deg2Rad;
             Vector3 targetPos = orbitTarget.position + new Vector3(Mathf.Cos(rad) * parryRadius,
                                                                    Mathf.Sin(rad) * parryRadius,
@@ -175,12 +175,11 @@ public class OrbStateController : MonoBehaviour
             transform.position = Vector3.Lerp(transform.position, targetPos, t);
 
             if (t >= 1f)
-                isApproaching = false; // Approach abgeschlossen
+                isApproaching = false;
 
-            return; // noch keine Rotation
+            return; 
         }
 
-        // Phase 2: Rotation auf der Umlaufbahn
         parryTimer -= Time.unscaledDeltaTime;
         parryAngle += parrySpeed * Time.unscaledDeltaTime;
 
@@ -206,34 +205,31 @@ public class OrbStateController : MonoBehaviour
 
     private IEnumerator HandleParryHit(EnemyController enemy)
     {
-        Debug.Log("canHop = false??");
         Rigidbody rb = enemy.GetComponent<Rigidbody>();
         bool hadKinematic = false;
         enemy.canHop = false;
 
-        // Temporärer Anchor am Player
         GameObject parryAnchor = new GameObject("ParryAnchor");
         parryAnchor.transform.position = orbitTarget.position;
         parryAnchor.transform.parent = orbitTarget;
 
-        // Gegner an Anchor hängen
         Vector3 startLocalPos = enemy.transform.position - orbitTarget.position;
         enemy.transform.SetParent(parryAnchor.transform, true);
 
         if (rb != null)
         {
             hadKinematic = rb.isKinematic;
-            rb.isKinematic = true; // wir kontrollieren die Position
+            rb.isKinematic = true; 
         }
 
         enemy.GetComponent<CapsuleCollider>().enabled = false;
 
-        // 1️⃣ Gegner smooth auf Orbit-Radius ziehen
         Vector3 initialLocalPos = enemy.transform.localPosition;
-        Vector3 targetLocalPos = enemy.transform.localPosition.normalized * parryRadius; // gewünschter Abstand
+        Vector3 targetLocalPos = enemy.transform.localPosition.normalized * parryRadius;
 
         float t = 0f;
-        float pullDuration = 0.2f; // Dauer des Ziehens
+        float pullDuration = 0.2f;
+
         while (t < 1f)
         {
             t += Time.unscaledDeltaTime / pullDuration;
@@ -241,27 +237,25 @@ public class OrbStateController : MonoBehaviour
             yield return null;
         }
 
-        // 2️⃣ Gegner einmal um den Spieler rotieren (360°)
         float angle = 0f;
-        float orbitSpeed = 360f; // Grad pro Sekunde
-        Vector3 offset = enemy.transform.localPosition; // Start auf korrektem Radius
+        float orbitSpeed = 360f;
+        Vector3 offset = enemy.transform.localPosition; 
 
         while (angle < 360f)
         {
             float deltaAngle = orbitSpeed * Time.unscaledDeltaTime;
             angle += deltaAngle;
 
-            offset = Quaternion.Euler(0f, deltaAngle, 0f) * offset; // Rotation um Y-Achse
+            offset = Quaternion.Euler(0f, deltaAngle, 0f) * offset; 
             enemy.transform.localPosition = offset;
 
             yield return null;
         }
 
-        // 3️⃣ Gegner nach vorne wegstoßen
-        Vector3 pushDir = startLocalPos.normalized; // Richtung, in die Gegner rausgeschleudert wird
+        Vector3 pushDir = startLocalPos.normalized;
         float pushForce = 10f;
 
-        enemy.transform.SetParent(null); // Anchor entfernen
+        enemy.transform.SetParent(null);
         GameObject.Destroy(parryAnchor);
 
         if (rb != null)
@@ -272,7 +266,6 @@ public class OrbStateController : MonoBehaviour
         }
         else
         {
-            // fallback: manuell verschieben
             float pushDuration = 0.2f;
             Vector3 pushStart = enemy.transform.position;
             Vector3 pushEnd = pushStart + pushDir * 2f;
