@@ -109,4 +109,9 @@ public class PlayerAnimationController : MonoBehaviour
         isGrounded = Physics.Raycast(raycastCenter.transform.position, Vector3.down, groundCheckDistance, groundLayer);
     }
 
+    public void TakeDamage(float dmg)
+    {
+
+    }
+
 }

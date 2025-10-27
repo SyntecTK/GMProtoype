@@ -4,25 +4,32 @@ using System.Collections;
 public class EnemyController : MonoBehaviour
 {
     public enum EnemyType { Shield, Jumper }
-
+    [Header("Settings")]
     public EnemyType enemyType;
+    [SerializeField] private float damage = 2f;
+    [SerializeField] private float maxHealth = 3f;
 
+
+    [Header ("Dependencies")]
     public GameObject eyesOpen;
     public GameObject eyesClosed;
 
     public GameObject parryObject;
 
+    [Header("Jumper Settings")]
     public float jumpForce = 1.2f;          // Sprunghöhe
     public float jumpDistance = 2f;       // Vorwärtsdistanz pro Sprung
     public float jumpInterval = 1.6f;     // Zeit zwischen Sprüngen
     public float sideOffset = 1f;         // seitlicher Versatz links/rechts
     public float flashDuration = 0.1f;
 
+    [Header ("Colors")]
     public Color vulnerableColor = Color.blue;
     public Color shieldColor = Color.red;
     public Color hitFlashColor = Color.white;
     public Color parryColor = Color.orange;
 
+    [Header("Shield Enemy Settings")]
     public float shieldMinInterval = 2f; // Minimale Invulnerable-Zeit
     public float shieldMaxInterval = 3f; // Maximale Invulnerable-Zeit
     public float vulnerableDuration = 1f; // Fix 1 Sekunde verwundbar
@@ -32,8 +39,12 @@ public class EnemyController : MonoBehaviour
     private Color currentColor;
     private bool isInvulnerable = false;
     private bool isFlashing = false;
-    private bool jumpLeft = true; // toggle für seitliche Sprünge
+    private bool jumpLeft = true;
     public bool canHop = true;
+
+    //health and damage
+    private float currentHealth;
+    public bool canAttack = true;
 
     void Start()
     {
@@ -42,6 +53,8 @@ public class EnemyController : MonoBehaviour
 
         currentColor = vulnerableColor;
         rend.material.color = currentColor;
+
+        currentHealth = maxHealth;
 
         if (enemyType == EnemyType.Shield)
         {
@@ -52,9 +65,10 @@ public class EnemyController : MonoBehaviour
             StartCoroutine(HopRoutine());
             StartCoroutine(ShieldCycleRoutine());
         }
+
     }
 
-    public void TakeDamage()
+    public void TakeDamage(float damage)
     {
         if (isInvulnerable) return;
 
@@ -63,6 +77,12 @@ public class EnemyController : MonoBehaviour
         if (!isFlashing)
         {
             StartCoroutine(FlashOnHit());
+        }
+
+        currentHealth -= damage;
+        if(currentHealth <= 0)
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -127,7 +147,14 @@ public class EnemyController : MonoBehaviour
         parryObject.SetActive(false);
     }
 
-    // Neue Methode für hüpfendes Verhalten
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player") && canAttack)
+        {
+            Debug.Log("Player Take Damage");
+            GameManager.Instance.DamagePlayer(damage);
+        }
+    }
     private IEnumerator HopRoutine()
     {
         while (true)

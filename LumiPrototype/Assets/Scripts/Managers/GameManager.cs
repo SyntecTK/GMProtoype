@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     public event Action<float, float> OnResourcesChanged;
+    public event Action PlayerDied;
+    public event Action LevelCleared;
+    public event Action<bool> OnGameEnded;
 
     [Header("Actors")]
     [SerializeField] private GameObject player;
@@ -31,7 +34,16 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
     }
-
+    public void DamagePlayer(float damage)
+    {
+        flowValue -= damage;
+        UseFlow(damage);
+        if(flowValue <= 0f)
+        {
+            Debug.Log("Player Died!");
+            OnGameEnded?.Invoke(true);
+        }
+    }
     public bool UseFlow(float amount)
     {
         if(flowValue >= amount)
@@ -79,5 +91,9 @@ public class GameManager : MonoBehaviour
     public void EndParryWindow()
     {
         canparry = false;
+    }
+    public void LevelClearedInvoke()
+    {
+        OnGameEnded?.Invoke(false);
     }
 }

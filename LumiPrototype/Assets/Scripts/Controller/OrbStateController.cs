@@ -12,6 +12,7 @@ public class OrbStateController : MonoBehaviour
         Returning
     }
 
+    [SerializeField] float damage = 1f;
     [Header("Orbit Settings")]
     public Transform orbitTarget;
     public float orbitRadius = 2f;
@@ -133,7 +134,7 @@ public class OrbStateController : MonoBehaviour
             {
                 Debug.Log("Hit enemy!");
                 if (enemy != null)
-                    enemy.TakeDamage();
+                    enemy.TakeDamage(damage);
 
                 StartReturn();
             }
@@ -230,6 +231,7 @@ public class OrbStateController : MonoBehaviour
         Rigidbody rb = enemy.GetComponent<Rigidbody>();
         bool hadKinematic = false;
         enemy.canHop = false;
+        enemy.canAttack = false;
 
         GameObject parryAnchor = new GameObject("ParryAnchor");
         parryAnchor.transform.position = orbitTarget.position;
@@ -303,6 +305,7 @@ public class OrbStateController : MonoBehaviour
         enemy.GetComponent<CapsuleCollider>().enabled = true;
         yield return new WaitForSeconds(2f);
         enemy.canHop = true;
+        enemy.canAttack = true;
     }
 
 }
