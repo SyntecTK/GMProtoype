@@ -7,8 +7,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     public event Action<float, float> OnResourcesChanged;
-    public event Action PlayerDied;
-    public event Action LevelCleared;
     public event Action<bool> OnGameEnded;
 
     [Header("Actors")]
@@ -36,8 +34,9 @@ public class GameManager : MonoBehaviour
     }
     public void DamagePlayer(float damage)
     {
+        //flowValue -= damage;
         flowValue -= damage;
-        UseFlow(damage);
+        OnResourcesChanged?.Invoke(flowValue, energyValue);
         if(flowValue <= 0f)
         {
             Debug.Log("Player Died!");

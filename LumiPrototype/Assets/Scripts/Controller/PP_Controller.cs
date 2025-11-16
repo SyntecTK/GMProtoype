@@ -12,9 +12,6 @@ public class PP_Controller : MonoBehaviour
     [SerializeField] private Material whiteMaterialLayer03;
     [Header("Fade Settings")]
     [SerializeField] private float fadeSpeed = 5f;
-    [SerializeField] private bool shouldFadeVignette = false;
-    [SerializeField] private bool shouldFadeFilmGrain = false;
-    [SerializeField] private bool shouldFadeSaturation = false;
 
     private Vignette vignette;
     private FilmGrain filmGrain;
@@ -36,6 +33,10 @@ public class PP_Controller : MonoBehaviour
 
         if (!volume.profile.TryGet<ColorAdjustments>(out colorAdjustments))
             Debug.LogWarning("ColorAdjustments is missing");
+
+        whiteMaterialLayer01.SetFloat("_FadeFactor", 0f);
+        whiteMaterialLayer02.SetFloat("_FadeFactor", 0f);
+        whiteMaterialLayer03.SetFloat("_FadeFactor", 0f);
 
         GameManager.Instance.OnResourcesChanged += FadeUIChange;
     }
@@ -79,6 +80,7 @@ public class PP_Controller : MonoBehaviour
 
         //Material Fade----------------
         Material targetMaterial = null;
+        Debug.Log("FlowValue: " + flowValue);
 
         if (flowValue >= 70f)
         {
@@ -92,6 +94,7 @@ public class PP_Controller : MonoBehaviour
         {
             targetMaterial = whiteMaterialLayer03;
         }
+
 
         if(materialCoroutine != null)
         {

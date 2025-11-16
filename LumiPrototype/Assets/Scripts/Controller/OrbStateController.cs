@@ -37,7 +37,6 @@ public class OrbStateController : MonoBehaviour
     [SerializeField] private float parrySpeed = 360f;  
     [SerializeField] private float parryDuration = 0.6f;
     [SerializeField] private float slowMoFactor = 0.3f;
-    [SerializeField] private float knockbackForce = 8f;
     [SerializeField] private float approachDuration = 0.15f;
 
     private float parryTimer;
@@ -46,8 +45,6 @@ public class OrbStateController : MonoBehaviour
     private float approachTimer = 0f;
     private bool isApproaching = false;
     private bool hitEnemyWithParry = false;
-
-    private bool hitEnemy = false;
 
     private void Update()
     {

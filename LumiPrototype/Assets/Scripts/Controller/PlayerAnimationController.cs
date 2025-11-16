@@ -14,10 +14,7 @@ public class PlayerAnimationController : MonoBehaviour
     [SerializeField] private float groundCheckDistance = 0.1f;
     [SerializeField] private LayerMask groundLayer;
     [Header("Attack Settings")]
-    [SerializeField] private float flowCost = 10f;
-    [SerializeField] private float flowGain = 15f;
     [SerializeField] private float energyCost = 10f;
-    [SerializeField] private float energyGain = 15f;
 
 
 
@@ -26,8 +23,6 @@ public class PlayerAnimationController : MonoBehaviour
     private string currentAnim = "";
 
     private bool isGrounded;
-    private float gravity = -9.81f;
-    private float velocityY = 0f;
     private Rigidbody rb;
 
 

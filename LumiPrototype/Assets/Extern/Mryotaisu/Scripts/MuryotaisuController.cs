@@ -21,7 +21,6 @@ namespace Muryotaisu
 
         float second; // Time Measurement
 
-        int key = 0;
         string state;
         string prevState;
 

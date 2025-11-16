@@ -14,8 +14,6 @@ public class EnemyController : MonoBehaviour
     public GameObject eyesOpen;
     public GameObject eyesClosed;
 
-    public GameObject parryObject;
-
     [Header("Jumper Settings")]
     public float jumpForce = 1.2f;          // Sprunghöhe
     public float jumpDistance = 2f;       // Vorwärtsdistanz pro Sprung
@@ -124,27 +122,6 @@ public class EnemyController : MonoBehaviour
         {
             rend.material.color = currentColor;
         }
-    }
-
-    private IEnumerator ParryCycleRoutine()
-    {
-        while (true)
-        {
-            ActivateParryWindow();
-            yield return new WaitForSeconds(vulnerableDuration);
-            DeactivateParryWindow();
-            yield return new WaitForSeconds(Random.Range(shieldMinInterval, shieldMaxInterval));
-        }
-    }
-
-    private void ActivateParryWindow()
-    {
-        parryObject.SetActive(true);
-    }
-
-    private void DeactivateParryWindow()
-    {
-        parryObject.SetActive(false);
     }
 
     private void OnCollisionEnter(Collision collision)
