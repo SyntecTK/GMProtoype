@@ -1,9 +1,13 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
+using System.Linq;
+using NUnit.Framework;
 
 public class PlayerAnimationController : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject raycastCenter;
     [SerializeField] private OrbStateController spiritOrb;
@@ -16,25 +20,32 @@ public class PlayerAnimationController : MonoBehaviour
     [Header("Attack Settings")]
     [SerializeField] private float energyCost = 10f;
 
-
-
-    private CharacterController controller;
     private Vector2 moveVector;
     private string currentAnim = "";
 
     private bool isGrounded;
     private Rigidbody rb;
 
+    private GameObject draggableObject;
+    private bool isDragging = false;
+
+    // Dragging
+    private readonly HashSet<Draggable> _nearbyDraggables = new HashSet<Draggable>();
+    private Draggable _currentDragged;
+
 
     private void Awake()
     {
-        controller = GetComponent<CharacterController>();
         rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
     {
-        HandleMovement();
+        if(GameManager.Instance.PlayerCanMove)
+        {
+            Debug.Log("MOVE");
+            HandleMovement();
+        }
     }
     private void PlayAnimation(string stateName)
     {
@@ -51,10 +62,34 @@ public class PlayerAnimationController : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
-        if (isGrounded)
+        if (isGrounded && GameManager.Instance.PlayerCanMove)
         {
             rb.AddForce(new Vector3(0f, jumpForce, 0f));
             PlayAnimation("Jump");
+        }
+    }
+
+    public void OnGrab(InputValue value)
+    {
+        if(draggableObject != null && !isDragging)
+        {
+            Debug.Log("Start Drag");
+            var d = draggableObject.GetComponent<Draggable>();
+            if (d != null)
+            {
+                d.StartDrag(transform);
+                // Move object to player's front so player visually grabs it
+                draggableObject.transform.position = transform.position + transform.forward * 1f;
+            }
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+            isDragging = true;
+        }
+        else if(isDragging)
+        {
+            Debug.Log("End Drag");
+            draggableObject?.GetComponent<Draggable>().StopDrag();
+            rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            isDragging = false;
         }
     }
 
@@ -90,7 +125,10 @@ public class PlayerAnimationController : MonoBehaviour
 
         if (Mathf.Abs(horizontalMove) > 0.01f)
         {
-            transform.rotation = Quaternion.Euler(0, horizontalMove > 0 ? 90 : 270, 0);
+            if(!isDragging)
+            {
+                transform.rotation = Quaternion.Euler(0, horizontalMove > 0 ? 90 : 270, 0);
+            }
 
             transform.position += new Vector3(horizontalMove * moveSpeed * Time.deltaTime, 0f, 0f);
 
@@ -104,9 +142,26 @@ public class PlayerAnimationController : MonoBehaviour
         isGrounded = Physics.Raycast(raycastCenter.transform.position, Vector3.down, groundCheckDistance, groundLayer);
     }
 
-    public void TakeDamage(float dmg)
-    {
+    /// <summary>
+    /// Whether the player is currently grounded. This is exposed so that other systems
+    /// (eg. Camera) can avoid following the player while they are airborne (jumping).
+    /// </summary>
+    public bool IsGrounded => isGrounded;
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out Draggable d))
+        {
+            draggableObject = other.gameObject;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out Draggable d))
+        {
+            draggableObject = null;
+        }
     }
 
 }

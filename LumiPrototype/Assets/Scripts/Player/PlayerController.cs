@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour
     private InputAction attackAction;
     private CharacterController controller;
     private Vector2 movementInput;
+    [Header("Optional refs")]
+    [SerializeField] private PlayerClimb playerClimb;
     private bool isAttacking;
 
     // Attack System
@@ -66,6 +68,12 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
         ApplyGravity();
 
+        // Forward vertical movement to the climp handler when the player is attached to the rope
+        if (playerClimb != null && playerClimb.IsClimbing)
+        {
+            playerClimb.SetClimbInput(movementInput.y);
+        }
+
         if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -74,11 +82,20 @@ public class PlayerController : MonoBehaviour
     private void OnMovementPerformed(InputAction.CallbackContext context)
     {
         movementInput = context.ReadValue<Vector2>();
+        // Immediately forward to PlayerClimb if the player is attached to a rope
+        if (playerClimb != null && playerClimb.IsClimbing)
+        {
+            playerClimb.SetClimbInput(movementInput.y);
+        }
     }
 
     private void OnMovementCanceled(InputAction.CallbackContext context)
     {
         movementInput = Vector2.zero;
+        if (playerClimb != null)
+        {
+            playerClimb.SetClimbInput(0f);
+        }
     }
 
     private void OnAttackPerformed(InputAction.CallbackContext context)
@@ -184,6 +201,12 @@ public class PlayerController : MonoBehaviour
     private void HandleMovement()
     {
         if (isAttacking) return;
+
+        // Block movement when game manager prohibits player movement (eg. when climbing)
+        if (GameManager.Instance != null && !GameManager.Instance.PlayerCanMove)
+        {
+            return;
+        }
 
         Vector3 move = new Vector3(movementInput.x, 0, movementInput.y);
         move *= moveSpeed;

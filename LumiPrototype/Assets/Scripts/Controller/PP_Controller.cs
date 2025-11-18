@@ -78,15 +78,23 @@ public class PP_Controller : MonoBehaviour
         }
         colorAdjustmentCoroutine = StartCoroutine(FadeColorAdjustments(targetSaturation));
 
-        //Material Fade----------------
+        //Materials
+        if(flowValue < 100f)
+        {
+            FadeBackgroundMaterial(flowValue);
+        }
+    }
+
+    public void FadeBackgroundMaterial(float flowValue)
+    {
         Material targetMaterial = null;
         Debug.Log("FlowValue: " + flowValue);
 
-        if (flowValue >= 70f)
+        if (flowValue <= 80f)
         {
             targetMaterial = whiteMaterialLayer01;
         }
-        else if (flowValue >= 35f)
+        else if (flowValue <= 40f)
         {
             targetMaterial = whiteMaterialLayer02;
         }
@@ -95,8 +103,7 @@ public class PP_Controller : MonoBehaviour
             targetMaterial = whiteMaterialLayer03;
         }
 
-
-        if(materialCoroutine != null)
+        if (materialCoroutine != null)
         {
             StopCoroutine(materialCoroutine);
         }

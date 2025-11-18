@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public event Action<float, float> OnResourcesChanged;
     public event Action<bool> OnGameEnded;
 
+    public bool PlayerCanMove = true;
+
     [Header("Actors")]
     [SerializeField] private GameObject player;
 
@@ -23,7 +25,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance != null && Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
         }
@@ -37,7 +39,7 @@ public class GameManager : MonoBehaviour
         //flowValue -= damage;
         flowValue -= damage;
         OnResourcesChanged?.Invoke(flowValue, energyValue);
-        if(flowValue <= 0f)
+        if (flowValue <= 0f)
         {
             Debug.Log("Player Died!");
             OnGameEnded?.Invoke(true);
@@ -45,7 +47,7 @@ public class GameManager : MonoBehaviour
     }
     public bool UseFlow(float amount)
     {
-        if(flowValue >= amount)
+        if (flowValue >= amount)
         {
             flowValue -= amount;
             OnResourcesChanged?.Invoke(flowValue, energyValue);
@@ -56,7 +58,7 @@ public class GameManager : MonoBehaviour
     }
     public bool UseEnergy(float amount)
     {
-        if(energyValue >= amount)
+        if (energyValue >= amount)
         {
             energyValue -= amount;
             OnResourcesChanged?.Invoke(flowValue, energyValue);
@@ -95,4 +97,15 @@ public class GameManager : MonoBehaviour
     {
         OnGameEnded?.Invoke(false);
     }
+
+    public void BlockMovement()
+    {
+        PlayerCanMove = false;
+    }
+
+    public void ReleaseMovementBlock()
+    {
+        PlayerCanMove = true;
+    }
+
 }
