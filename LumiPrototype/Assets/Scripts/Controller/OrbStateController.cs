@@ -39,6 +39,8 @@ public class OrbStateController : MonoBehaviour
     [SerializeField] private float parryDuration = 0.6f;
     [SerializeField] private float slowMoFactor = 0.3f;
     [SerializeField] private float approachDuration = 0.15f;
+    [SerializeField] private float expandScale = 5f;
+    [SerializeField] private float expandDuration = 0.15f;
 
     private float parryTimer;
     private float parryAngle;
@@ -46,12 +48,23 @@ public class OrbStateController : MonoBehaviour
     private float approachTimer = 0f;
     private bool isApproaching = false;
     private bool hitEnemyWithParry = false;
+    private bool isExpanding = false;
+    private bool isExpanded = false;
+    private Vector3 originalScale;
+    private Collider orbCollider;
+    private Collider[] playerColliders;
+    private float expandTimer = 0f;
 
     private PlayerAnimationController player;
 
     private void Start()
     {
         player = FindAnyObjectByType<PlayerAnimationController>();
+        orbCollider = GetComponent<Collider>();
+        if (player != null)
+        {
+            playerColliders = player.GetComponentsInChildren<Collider>();
+        }
     }
 
     private void Update()
@@ -170,6 +183,17 @@ public class OrbStateController : MonoBehaviour
         Time.timeScale = slowMoFactor;
 
         float timer = parryDuration;
+        // store original size and prepare for approach/expand
+        originalScale = transform.localScale;
+        // Also ignore collisions with the player immediately so the orb can pass through
+        if (orbCollider != null && playerColliders != null)
+        {
+            foreach (var pc in playerColliders)
+            {
+                if (pc != null)
+                    Physics.IgnoreCollision(orbCollider, pc, true);
+            }
+        }
     }
 
     private void CheckForParryHit()
@@ -195,28 +219,55 @@ public class OrbStateController : MonoBehaviour
             float t = Mathf.Clamp01(approachTimer / approachDuration);
 
             float rad = parryAngle * Mathf.Deg2Rad;
-            Vector3 targetPos = orbitTarget.position + new Vector3(Mathf.Cos(rad) * parryRadius,
-                                                                   Mathf.Sin(rad) * parryRadius,
-                                                                   0f);
+            // Approach the center of the player (orbitTarget.position)
+            Vector3 targetPos = orbitTarget.position;
 
             transform.position = Vector3.Lerp(transform.position, targetPos, t);
 
             if (t >= 1f)
+            {
                 isApproaching = false;
+                // Once reached the center, start expanding
+                isExpanding = true;
+                isExpanded = false;
+                expandTimer = 0f;
+                // Disable collisions with the player's colliders so the orb can be inside without pushing them
+                if (orbCollider != null && playerColliders != null)
+                {
+                    foreach (var pc in playerColliders)
+                    {
+                        if (pc != null)
+                            Physics.IgnoreCollision(orbCollider, pc, true);
+                    }
+                }
+            }
 
             return; 
         }
 
+        // If we're expanding, perform scale up animation
+        if (isExpanding)
+        {
+            expandTimer += Time.unscaledDeltaTime;
+            float et = Mathf.Clamp01(expandTimer / expandDuration);
+            // lerp from original to expanded size
+            transform.localScale = Vector3.Lerp(originalScale, originalScale * expandScale, et);
+
+            // when expansion is complete, mark expanded
+            if (et >= 1f)
+            {
+                isExpanding = false;
+                isExpanded = true;
+                // reset the timer so we get the full parry duration while expanded
+                parryTimer = parryDuration;
+            }
+        }
+
+        // Decrease parry timer once expansion finished (or immediately if no expand)
         parryTimer -= Time.unscaledDeltaTime;
-        parryAngle += parrySpeed * Time.unscaledDeltaTime;
-
-        float radians = parryAngle * Mathf.Deg2Rad;
-
-        float x = Mathf.Cos(radians) * parryRadius;
-        float y = Mathf.Sin(radians) * parryRadius;
-        float z = 0f;
-
-        transform.position = orbitTarget.position + new Vector3(x, y, z);
+        // While parrying we don't orbit anymore — the orb sits centered and expanded
+        // so nothing to do here other than remain at the center of the target
+        transform.position = orbitTarget.position;
 
         if (parryTimer <= 0f)
         {
@@ -226,6 +277,19 @@ public class OrbStateController : MonoBehaviour
 
     private void EndParry()
     {
+        // restore player collisions if we disabled them
+        if (orbCollider != null && playerColliders != null)
+        {
+            foreach (var pc in playerColliders)
+            {
+                if (pc != null)
+                    Physics.IgnoreCollision(orbCollider, pc, false);
+            }
+        }
+
+        // restore size
+        transform.localScale = originalScale;
+
         CheckForParryHit();
         Time.timeScale = 1f;
         hitEnemyWithParry = false;
