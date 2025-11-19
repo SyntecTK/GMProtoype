@@ -164,4 +164,45 @@ public class PlayerAnimationController : MonoBehaviour
         }
     }
 
+    public void PlayParryMissAnimation()
+    {
+        StartCoroutine(ParryMissSequence());
+    }
+
+    private System.Collections.IEnumerator ParryMissSequence()
+    {
+        Debug.Log("Parry Miss Animation");
+        // Store original state
+        Vector3 originalPosition = transform.position;
+        Quaternion originalRotation = transform.rotation;
+        bool wasKinematic = rb.isKinematic;
+        RigidbodyConstraints originalConstraints = rb.constraints;
+        
+        // Disable player control
+        bool previousCanMove = GameManager.Instance.PlayerCanMove;
+        GameManager.Instance.PlayerCanMove = false;
+
+        // Rotate player 90 degrees on global X axis (fall down)
+        transform.rotation = Quaternion.Euler(90f, transform.rotation.eulerAngles.y, 0f);
+        
+        // Enable gravity and physics
+        rb.isKinematic = false;
+        rb.constraints = RigidbodyConstraints.None;
+        
+        // Wait for 1 second while falling
+        yield return new WaitForSeconds(1f);
+        
+        // Restore original state
+        rb.isKinematic = true;
+        transform.position = originalPosition;
+        transform.rotation = originalRotation;
+        rb.isKinematic = wasKinematic;
+        rb.constraints = originalConstraints;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        
+        // Re-enable player control
+        GameManager.Instance.PlayerCanMove = previousCanMove;
+    }
+
 }

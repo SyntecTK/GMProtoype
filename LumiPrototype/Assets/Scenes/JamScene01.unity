@@ -1525,8 +1525,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 1
-  damage: 30
-  maxHealth: 3
+  damage: 15
+  maxHealth: 10
   eyesOpen: {fileID: 1566479340}
   eyesClosed: {fileID: 1586589501}
   jumpForce: 1.2
@@ -1538,11 +1538,12 @@ MonoBehaviour:
   shieldColor: {r: 1, g: 0, b: 0, a: 1}
   hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
   parryColor: {r: 1, g: 0.6470588, b: 0, a: 1}
-  shieldMinInterval: 2
-  shieldMaxInterval: 5
-  vulnerableDuration: 2
+  shieldMinInterval: 1
+  shieldMaxInterval: 1.5
+  vulnerableDuration: 4
   canHop: 1
   canAttack: 1
+  activationRange: 10
 --- !u!1 &509699178
 GameObject:
   m_ObjectHideFlags: 0
@@ -6830,121 +6831,6 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!1001 &612502360
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 518573371772993642, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_Constraints
-      value: 120
-      objectReference: {fileID: 0}
-    - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 27.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -1.28041
-      objectReference: {fileID: 0}
-    - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -2.13
-      objectReference: {fileID: 0}
-    - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7613230288562090282, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_Name
-      value: ParryEnemy (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 7613230288562090282, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 4621554985588478794, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7613230288562090282, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 612502364}
-  m_SourcePrefab: {fileID: 100100000, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
---- !u!1 &612502361 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7613230288562090282, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-  m_PrefabInstance: {fileID: 612502360}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &612502362 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3688383629941476072, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-  m_PrefabInstance: {fileID: 612502360}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &612502363 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7137911258122093907, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
-  m_PrefabInstance: {fileID: 612502360}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &612502364
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 612502361}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ab36654c78b74f409087dcb784269eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyType: 1
-  damage: 20
-  maxHealth: 3
-  eyesOpen: {fileID: 612502363}
-  eyesClosed: {fileID: 612502362}
-  jumpForce: 1.2
-  jumpDistance: 2
-  jumpInterval: 1.6
-  sideOffset: 1
-  flashDuration: 0.1
-  vulnerableColor: {r: 0, g: 0, b: 1, a: 1}
-  shieldColor: {r: 1, g: 0, b: 0, a: 1}
-  hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
-  parryColor: {r: 1, g: 0.6470588, b: 0, a: 1}
-  shieldMinInterval: 2
-  shieldMaxInterval: 5
-  vulnerableDuration: 2
-  canHop: 1
-  canAttack: 1
 --- !u!1 &648430633
 GameObject:
   m_ObjectHideFlags: 0
@@ -9650,11 +9536,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2639667466430773696, guid: e4aedb39e9f545d4ea4823858526bc32, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 30.92
+      value: 50.5
       objectReference: {fileID: 0}
     - target: {fileID: 2639667466430773696, guid: e4aedb39e9f545d4ea4823858526bc32, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.116
+      value: -13.713
       objectReference: {fileID: 0}
     - target: {fileID: 2639667466430773696, guid: e4aedb39e9f545d4ea4823858526bc32, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10025,11 +9911,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.8
+      value: 73.9
       objectReference: {fileID: 0}
     - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.28041
+      value: -13.7
       objectReference: {fileID: 0}
     - target: {fileID: 5084596228404346515, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10069,7 +9955,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7613230288562090282, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4621554985588478794, guid: 5fca2fefbe61e4841aa25c148690e9b9, type: 3}
@@ -15917,7 +15803,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &1836510691
 MonoBehaviour:
@@ -15971,7 +15857,7 @@ MonoBehaviour:
   orbitSpeed: 180
   bobAmplitude: 0.2
   bobFrequency: 0.2
-  attackSpeed: 10
+  attackSpeed: 20
   maxAttackDistance: 10
   returnSpeed: 12
   parryRadius: 1.5
@@ -16739,7 +16625,6 @@ SceneRoots:
   - {fileID: 1841902860}
   - {fileID: 1402517403}
   - {fileID: 1450915888}
-  - {fileID: 612502360}
   - {fileID: 256892502}
   - {fileID: 911250453}
   - {fileID: 1163416114}

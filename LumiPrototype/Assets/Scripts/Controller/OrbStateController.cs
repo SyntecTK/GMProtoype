@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -45,6 +46,13 @@ public class OrbStateController : MonoBehaviour
     private float approachTimer = 0f;
     private bool isApproaching = false;
     private bool hitEnemyWithParry = false;
+
+    private PlayerAnimationController player;
+
+    private void Start()
+    {
+        player = FindAnyObjectByType<PlayerAnimationController>();
+    }
 
     private void Update()
     {
@@ -175,6 +183,7 @@ public class OrbStateController : MonoBehaviour
         {
             Debug.Log("Missed the Parry!");
             GameManager.Instance.UseFlow(10f);
+            player.PlayParryMissAnimation();
         }
     }
 

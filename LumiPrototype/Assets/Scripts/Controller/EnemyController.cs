@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
+using NUnit.Framework;
 
 public class EnemyController : MonoBehaviour
 {
@@ -15,9 +17,9 @@ public class EnemyController : MonoBehaviour
     public GameObject eyesClosed;
 
     [Header("Jumper Settings")]
-    public float jumpForce = 1.2f;          // Sprunghöhe
-    public float jumpDistance = 2f;       // Vorwärtsdistanz pro Sprung
-    public float jumpInterval = 1.6f;     // Zeit zwischen Sprüngen
+    public float jumpForce = 1.2f;          // Sprunghï¿½he
+    public float jumpDistance = 2f;       // Vorwï¿½rtsdistanz pro Sprung
+    public float jumpInterval = 1.6f;     // Zeit zwischen Sprï¿½ngen
     public float sideOffset = 1f;         // seitlicher Versatz links/rechts
     public float flashDuration = 0.1f;
 
@@ -28,9 +30,9 @@ public class EnemyController : MonoBehaviour
     public Color parryColor = Color.orange;
 
     [Header("Shield Enemy Settings")]
-    public float shieldMinInterval = 2f; // Minimale Invulnerable-Zeit
-    public float shieldMaxInterval = 3f; // Maximale Invulnerable-Zeit
-    public float vulnerableDuration = 1f; // Fix 1 Sekunde verwundbar
+    public float shieldMinInterval = 1f; // Minimale Invulnerable-Zeit
+    public float shieldMaxInterval = 1.5f; // Maximale Invulnerable-Zeit
+    public float vulnerableDuration = 3f; // Fix 1 Sekunde verwundbar
 
     private Rigidbody rb;
     private Renderer rend;
@@ -44,6 +46,13 @@ public class EnemyController : MonoBehaviour
     private float currentHealth;
     public bool canAttack = true;
 
+    private bool startedBehaviour = false;
+    [Header("Activation")]
+    [Tooltip("How close the player must be before this enemy starts its behaviours.")]
+    [SerializeField] private float activationRange = 10f;
+
+    private bool isAttacking = false;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -54,16 +63,35 @@ public class EnemyController : MonoBehaviour
 
         currentHealth = maxHealth;
 
-        if (enemyType == EnemyType.Shield)
-        {
-            StartCoroutine(ShieldCycleRoutine());
-        }
-        else if (enemyType == EnemyType.Jumper)
-        {
-            StartCoroutine(HopRoutine());
-            StartCoroutine(ShieldCycleRoutine());
-        }
+        // Don't automatically start behaviour coroutines here. These coroutines
+        // should start when the player is near (to improve performance) â€” we'll
+        // trigger them from Update() once per enemy.
 
+    }
+
+    private void Update()
+    {
+        // Activation: start coroutines the first time the player enters activationRange
+        if (!startedBehaviour)
+        {
+            Vector3 playerPos = GameManager.Instance.GetPlayerPosition();
+            float distance = Vector3.Distance(transform.position, playerPos);
+            if (distance <= activationRange)
+            {
+                startedBehaviour = true;
+                // Jumper enemies run both hop and shield cycles
+                if (enemyType == EnemyType.Jumper)
+                {
+                    StartCoroutine(HopRoutine());
+                    StartCoroutine(ShieldCycleRoutine());
+                }
+                // Shield-only enemies need only the shield routine
+                else if (enemyType == EnemyType.Shield)
+                {
+                    StartCoroutine(ShieldCycleRoutine());
+                }
+            }
+        }
     }
 
     public void TakeDamage(float damage)
@@ -104,12 +132,21 @@ public class EnemyController : MonoBehaviour
     {
         while (true)
         {
-            SetVulnerable(true);
-            yield return new WaitForSeconds(vulnerableDuration);
+            if (!isAttacking)
+            {
+                SetVulnerable(true);
+                yield return new WaitForSeconds(vulnerableDuration);
 
-            float invulnerableTime = Random.Range(shieldMinInterval, shieldMaxInterval);
-            SetVulnerable(false);
-            yield return new WaitForSeconds(invulnerableTime);
+                float invulnerableTime = Random.Range(shieldMinInterval, shieldMaxInterval);
+                SetVulnerable(false);
+                yield return new WaitForSeconds(invulnerableTime);
+            }
+            else
+            {
+                // If the enemy is currently attacking, we must yield to avoid a busy CPU loop.
+                // The coroutine will check again next frame to resume the shield cycle.
+                yield return null;
+            }
         }
     }
 
@@ -143,6 +180,7 @@ public class EnemyController : MonoBehaviour
 
                 if(doAttack)
                 {
+                    isAttacking = true;
                     Debug.Log("ATTACK");
                     GameManager.Instance.StartParryWindow();
                     rend.material.color = parryColor;
@@ -153,13 +191,16 @@ public class EnemyController : MonoBehaviour
 
                     Vector3 jumpVec = Vector3.up * (jumpForce * 1.6f) + playerDir * (jumpDistance * 4f);
 
+                    yield return new WaitForSeconds(1f);
+
                     rb.linearVelocity = Vector3.zero;
                     rb.AddForce(jumpVec, ForceMode.VelocityChange);
 
-                    yield return new WaitForSeconds(0.6f);
+                    yield return new WaitForSeconds(2f);
                     rb.linearVelocity = Vector3.zero;
                     rend.material.color = currentColor = isInvulnerable ? shieldColor : vulnerableColor;
                     GameManager.Instance.EndParryWindow();
+                    isAttacking = false;
                 }
                 else
                 {

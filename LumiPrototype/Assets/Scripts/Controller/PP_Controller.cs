@@ -49,7 +49,7 @@ public class PP_Controller : MonoBehaviour
     private void FadeUIChange(float flowValue, float energyValue)
     {
         //Vignette Fade------------------
-        float targetVignette = vignette != null ? 1f - (energyValue / 100f) : 0f;
+        float targetVignette = vignette != null ? 1f - (flowValue / 100f) : 0f;
         
         if(vignetteCoroutine != null)
         {
@@ -59,7 +59,7 @@ public class PP_Controller : MonoBehaviour
         vignetteCoroutine = StartCoroutine(FadeVignette(targetVignette / 2f));
 
         //FilmGrain Fade----------------
-        float targetGrain = filmGrain != null ? 1f - (energyValue / 100f) : 0f;
+        float targetGrain = filmGrain != null ? 1f - (flowValue / 100f) : 0f;
 
         if(filmGrainCoroutine != null)
         {
@@ -70,7 +70,7 @@ public class PP_Controller : MonoBehaviour
 
         //Color Saturation-------------
 
-        float targetSaturation = colorAdjustments != null ? -100f * (1f - (energyValue / 100f)) : 0f;
+        float targetSaturation = colorAdjustments != null ? -100f * (1f - (flowValue / 100f)) : 0f;
 
         if(colorAdjustmentCoroutine != null)
         {
@@ -90,11 +90,11 @@ public class PP_Controller : MonoBehaviour
         Material targetMaterial = null;
         Debug.Log("FlowValue: " + flowValue);
 
-        if (flowValue <= 80f)
+        if (flowValue >= 80f && flowValue < 100f)
         {
             targetMaterial = whiteMaterialLayer01;
         }
-        else if (flowValue <= 40f)
+        else if (flowValue >= 50f && flowValue < 80f)
         {
             targetMaterial = whiteMaterialLayer02;
         }
